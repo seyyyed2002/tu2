@@ -52,7 +52,8 @@ import {
   Briefcase,
   Dumbbell,
   Trophy,
-  Coins
+  Coins,
+  LayoutGrid
 } from 'lucide-react';
 
 interface DashboardProps {
@@ -220,7 +221,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ initialDate, onDateChange,
     return [...filteredDefault, ...filteredCustom];
   }, [customWorkouts, deletedWorkoutIds]);
 
-  // Mobile Workspace Navigation state ('log' = daily log, 'elementor' = configure)
+  // Workspace Navigation state ('log' = daily log, 'elementor' = configure)
   const [mobileTab, setMobileTab] = useState<'log' | 'elementor'>('log');
 
   // Generate random star positions once on mount (stable across renders)
@@ -890,42 +891,41 @@ export const Dashboard: React.FC<DashboardProps> = ({ initialDate, onDateChange,
         </div>
       </div>
 
-
-      {/* 3. Responsive Workspace */}
-      
-      {/* Tab Selector for Mobile Screens */}
-      <div className="flex lg:hidden bg-gray-100 dark:bg-gray-800/80 p-1 rounded-xl border border-gray-200/50 dark:border-gray-700/50">
+      {/* 3. Responsive Workspace Tab Selector (Available on ALL screen sizes) */}
+      <div className="flex bg-gray-100 dark:bg-gray-800/80 p-1.5 rounded-2xl border border-gray-200/50 dark:border-gray-700/50 shadow-inner">
         <button
+          type="button"
           onClick={() => setMobileTab('log')}
-          className={`flex-1 py-2.5 text-center rounded-lg font-bold text-xs transition duration-200 ${
+          className={`flex-1 py-3 px-3 text-center rounded-xl font-bold text-xs sm:text-sm transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer ${
             mobileTab === 'log'
               ? 'bg-white dark:bg-gray-700 text-primary-600 dark:text-primary-300 shadow-sm'
               : 'text-gray-500 hover:text-gray-700 dark:text-gray-400'
           }`}
         >
-          📝 ثبت اعمال امروز ({toPersianDigits(activeDeeds.length)})
+          <span>📝 ثبت اعمال امروز ({toPersianDigits(activeDeeds.length)})</span>
         </button>
+
         <button
+          type="button"
           onClick={() => setMobileTab('elementor')}
-          className={`flex-1 py-2.5 text-center rounded-lg font-bold text-xs transition duration-200 flex items-center justify-center gap-1.5 ${
+          className={`flex-1 py-3 px-3 text-center rounded-xl font-bold text-xs sm:text-sm transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer ${
             mobileTab === 'elementor'
               ? 'bg-white dark:bg-gray-700 text-primary-600 dark:text-primary-300 shadow-sm'
               : 'text-gray-500 hover:text-gray-700 dark:text-gray-400'
           }`}
         >
-          <Sliders className="w-3.5 h-3.5" />
-          <span>شخصی‌سازی</span>
+          <Sliders className="w-4 h-4 text-primary-500" />
+          <span>چینش و شخصی‌سازی برنامه</span>
         </button>
       </div>
 
-
-      {/* Main Grid: Left Side is Logger, Right Side is Elementor library */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      {/* Main Container */}
+      <div className="w-full max-w-4xl mx-auto transition-all">
         
         {/* ========================================================= */}
-        {/* COLUMN A: DAILY LOGGER WORKBENCH (7 cols)                  */}
+        {/* COLUMN A: DAILY LOGGER WORKBENCH                           */}
         {/* ========================================================= */}
-        <div className={`lg:col-span-7 space-y-6 ${mobileTab !== 'log' ? 'hidden lg:block' : 'block'}`}>
+        <div className={`space-y-6 ${mobileTab === 'log' ? 'block w-full' : 'hidden'}`}>
           
           <div className="bg-white dark:bg-gray-800 rounded-3xl border border-gray-100 dark:border-gray-700/60 p-5 shadow-sm space-y-4">
             <div className="flex items-center justify-between border-b border-gray-100 dark:border-gray-700 pb-3">
@@ -1421,12 +1421,12 @@ export const Dashboard: React.FC<DashboardProps> = ({ initialDate, onDateChange,
 
           {/* Floating Action Button for Save */}
           {!isReadOnly && (
-            <div className="fixed bottom-24 left-1/2 -translate-x-1/2 w-full max-w-3xl pb-4 flex justify-center z-[90] pointer-events-none">
+            <div className="fixed bottom-20 sm:bottom-6 left-1/2 -translate-x-1/2 w-full max-w-md px-4 pb-2 flex justify-center z-40 pointer-events-none">
                 <button
                     onClick={handleSave}
                     disabled={isSaving}
-                    className={`pointer-events-auto flex items-center gap-2 px-8 py-3 rounded-full text-white font-bold shadow-lg transform transition-all active:scale-95 ${
-                        showSaveSuccess ? 'bg-green-600 dark:bg-green-700 scale-105' : 'bg-primary-600 hover:bg-primary-700 dark:bg-primary-700 dark:hover:bg-primary-600'
+                    className={`pointer-events-auto flex items-center justify-center gap-2 px-8 py-3.5 rounded-full text-white font-bold shadow-xl backdrop-blur-md transform transition-all active:scale-95 cursor-pointer ${
+                        showSaveSuccess ? 'bg-green-600 dark:bg-green-700 scale-105 shadow-green-500/30' : 'bg-primary-600 hover:bg-primary-700 dark:bg-primary-700 dark:hover:bg-primary-600 shadow-primary-600/30'
                     }`}
                 >
                     {isSaving ? (
@@ -1435,7 +1435,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ initialDate, onDateChange,
                         <span>با موفقیت ذخیره شد</span>
                     ) : (
                         <>
-                            <Save className="w-4 h-4" />
+                            <Save className="w-5 h-5" />
                             <span>ثبت دفترچه مراقبه امروز</span>
                         </>
                     )}
@@ -1446,9 +1446,9 @@ export const Dashboard: React.FC<DashboardProps> = ({ initialDate, onDateChange,
         </div>
 
         {/* ========================================================= */}
-        {/* COLUMN B: ELEMENTOR WORKSPACE BUILDER (5 cols)             */}
+        {/* COLUMN B: ELEMENTOR WORKSPACE BUILDER                     */}
         {/* ========================================================= */}
-        <div className={`lg:col-span-5 space-y-6 ${mobileTab !== 'elementor' ? 'hidden lg:block' : 'block'}`}>
+        <div className={`space-y-6 ${mobileTab === 'elementor' ? 'block w-full' : 'hidden'}`}>
           
           <div className="bg-white dark:bg-gray-800 rounded-3xl border border-gray-100 dark:border-gray-700/60 p-5 shadow-sm space-y-5 sticky top-6">
             
